@@ -642,7 +642,7 @@
     nr.appendChild(indentTd);
 
     const td = document.createElement('td');
-    td.colSpan = 4;
+    td.colSpan = 3;
     td.className = 'notes-cell';
     td.innerHTML = `
       <div id="notes-list-${p.id}"></div>
@@ -657,6 +657,9 @@
       </div>
     `;
     nr.appendChild(td);
+    const endTd = document.createElement('td');
+    endTd.style.background = '#FDFBFF';
+    nr.appendChild(endTd);
     tbody.appendChild(nr);
 
     p.notes.forEach(n => appendNoteItem(p.id, n));
