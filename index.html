@@ -637,6 +637,10 @@
     colorTd.style.background = p.color;
     nr.appendChild(colorTd);
 
+    const indentTd = document.createElement('td');
+    indentTd.style.background = '#FDFBFF';
+    nr.appendChild(indentTd);
+
     const td = document.createElement('td');
     td.colSpan = 4;
     td.className = 'notes-cell';
@@ -653,9 +657,6 @@
       </div>
     `;
     nr.appendChild(td);
-    const emptyTd = document.createElement('td');
-    emptyTd.style.background = '#FDFBFF';
-    nr.appendChild(emptyTd);
     tbody.appendChild(nr);
 
     p.notes.forEach(n => appendNoteItem(p.id, n));
