@@ -221,26 +221,44 @@
     tr.notes-row { display: none; }
     tr.notes-row.open { display: table-row; }
 
+    td.notes-color-strip {
+      padding: 0;
+      width: 10px;
+    }
+
     td.notes-cell {
-      padding: 0.75rem 1rem 1.25rem 1.5rem;
+      padding: 0.75rem 1rem 1.25rem 1rem;
       background: #FDFBFF;
-      border-left: 5px solid #E0D8FF;
     }
 
     .note-item {
       display: flex;
       align-items: flex-start;
-      gap: 1rem;
-      padding: 0.5rem 0;
+      gap: 0.75rem;
+      padding: 0.5rem 0.4rem;
+      border-radius: 6px;
       border-bottom: 1px solid #F0ECFF;
+      transition: background 0.15s;
     }
     .note-item:last-of-type { border-bottom: none; }
+    .note-item.checked { background: #D4F5E2; }
+    .note-item.checked .note-date,
+    .note-item.checked .note-text { color: #2A7A4A; }
+
+    .note-check {
+      margin-top: 3px;
+      accent-color: #4CAF80;
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
 
     .note-date {
       font-size: 0.7rem;
       color: #B0A8C8;
       white-space: nowrap;
-      padding-top: 3px;
+      padding-top: 2px;
       min-width: 75px;
     }
 
@@ -496,8 +514,8 @@
     save();
     const bar = document.querySelector(`#ctd-${id} .color-bar`);
     if (bar) bar.style.background = color;
-    const notesTd = document.querySelector(`#notes-${id} td.notes-cell`);
-    if (notesTd) notesTd.style.borderLeftColor = color;
+    const notesStrip = document.querySelector(`#notes-${id} td.notes-color-strip`);
+    if (notesStrip) notesStrip.style.background = color;
     closePopover();
   }
 
@@ -532,7 +550,7 @@
     if (!text) return;
     const p = projects.find(p => p.id === id);
     if (!p) return;
-    const note = { id: Date.now(), date: todayStr(), text };
+    const note = { id: Date.now(), date: todayStr(), text, checked: false };
     p.notes.push(note);
     save();
     ta.value = '';
@@ -550,12 +568,25 @@
   }
 
   /* ── Render helpers ──────────────────────────────────────── */
+  function toggleNoteCheck(projId, noteId, checked) {
+    const p = projects.find(p => p.id === projId);
+    if (!p) return;
+    const n = p.notes.find(n => n.id === noteId);
+    if (!n) return;
+    n.checked = checked;
+    save();
+    const el = document.getElementById(`note-item-${noteId}`);
+    if (el) el.classList.toggle('checked', checked);
+  }
+
   function appendNoteItem(projId, note) {
     const list = document.getElementById(`notes-list-${projId}`);
     const div  = document.createElement('div');
-    div.className = 'note-item';
+    div.className = 'note-item' + (note.checked ? ' checked' : '');
     div.id = `note-item-${note.id}`;
     div.innerHTML = `
+      <input type="checkbox" class="note-check" ${note.checked ? 'checked' : ''}
+        onchange="toggleNoteCheck(${projId}, ${note.id}, this.checked)" />
       <span class="note-date">${formatDate(note.date)}</span>
       <span class="note-text">${escHtml(note.text)}</span>
       <button class="note-delete" onclick="deleteNote(${projId}, ${note.id})" title="Ta bort">✕</button>
@@ -601,10 +632,14 @@
     nr.className = 'notes-row';
     nr.id = `notes-${p.id}`;
 
+    const colorTd = document.createElement('td');
+    colorTd.className = 'notes-color-strip';
+    colorTd.style.background = p.color;
+    nr.appendChild(colorTd);
+
     const td = document.createElement('td');
-    td.colSpan = 6;
+    td.colSpan = 5;
     td.className = 'notes-cell';
-    td.style.borderLeftColor = p.color;
     td.innerHTML = `
       <div id="notes-list-${p.id}"></div>
       <button class="add-note-btn" id="add-note-btn-${p.id}" onclick="showNoteInput(${p.id})">+ Lägg till anteckning</button>
