@@ -67,6 +67,15 @@
       border-color: #B8A8F0;
     }
 
+    #inp-status {
+      background: #C5B3FF;
+      color: #3E2080;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #inp-status:focus { border: none; }
+
     .field-name { flex: 1; min-width: 180px; }
 
     .btn-add {
@@ -348,7 +357,10 @@
       <label>Deadline</label>
       <input type="date" id="inp-deadline" />
     </div>
-    <button class="btn-add" onclick="addProject()">+ Lägg till</button>
+    <div class="field">
+      <label style="visibility:hidden;">.</label>
+      <button class="btn-add" onclick="addProject()">+ Lägg till</button>
+    </div>
   </div>
 
   <table>
