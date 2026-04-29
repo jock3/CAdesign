@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Todo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: #1a1a2e;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .toolbar input, .toolbar select {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background: #fff;
+      color: #1a1a2e;
+    }
+
+    .toolbar input[type="text"] { flex: 1; min-width: 160px; }
+    .toolbar input[type="date"] { min-width: 140px; }
+
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-add {
+      background: #4f46e5;
+      color: #fff;
+      font-weight: 500;
+    }
+    .btn-add:hover { background: #4338ca; }
+
+    .table-wrap {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead tr {
+      background: #f8f9fb;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    th {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6b7280;
+    }
+
+    th:last-child { width: 80px; text-align: center; }
+
+    tbody tr.project-row {
+      border-bottom: 1px solid #f3f4f6;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    tbody tr.project-row:hover { background: #fafbff; }
+    tbody tr.project-row.open { background: #fafbff; }
+
+    td {
+      padding: 0.85rem 1rem;
+      font-size: 0.9rem;
+      vertical-align: middle;
+    }
+
+    td:last-child { text-align: center; }
+
+    .expand-btn {
+      background: none;
+      border: 1px solid #e5e7eb;
+      border-radius: 5px;
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      font-size: 1rem;
+      color: #6b7280;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.1s, transform 0.2s;
+    }
+    .expand-btn:hover { background: #f3f4f6; }
+    .expand-btn.rotated { transform: rotate(90deg); }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-size: 1rem;
+      padding: 4px 6px;
+      border-radius: 4px;
+      opacity: 0.5;
+      transition: opacity 0.15s;
+    }
+    .delete-btn:hover { opacity: 1; background: #fef2f2; }
+
+    .actions-cell { display: flex; gap: 4px; align-items: center; justify-content: center; }
+
+    .notes-row { display: none; border-bottom: 1px solid #f3f4f6; }
+    .notes-row.open { display: table-row; }
+
+    .notes-cell {
+      padding: 0.75rem 1rem 1rem 2.5rem;
+      background: #f8f9fb;
+    }
+
+    .notes-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #9ca3af;
+      margin-bottom: 0.4rem;
+    }
+
+    .notes-cell textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-family: inherit;
+      resize: vertical;
+      background: #fff;
+      color: #1a1a2e;
+      transition: border-color 0.15s;
+    }
+    .notes-cell textarea:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+
+    .badge-todo      { background: #e5e7eb; color: #374151; }
+    .badge-progress  { background: #dbeafe; color: #1d4ed8; }
+    .badge-review    { background: #fef3c7; color: #92400e; }
+    .badge-done      { background: #d1fae5; color: #065f46; }
+
+    .project-name-cell {
+      font-weight: 500;
+    }
+
+    .status-select {
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.82rem;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .deadline-cell {
+      font-size: 0.85rem;
+    }
+
+    .deadline-cell.overdue { color: #ef4444; font-weight: 500; }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #9ca3af;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Projects</h1>
+
+<div class="toolbar">
+  <input type="text" id="inp-name" placeholder="Project name" />
+  <select id="inp-status">
+    <option value="todo">Todo</option>
+    <option value="progress">In Progress</option>
+    <option value="review">In Review</option>
+    <option value="done">Done</option>
+  </select>
+  <input type="date" id="inp-deadline" />
+  <button class="btn-add" onclick="addProject()">+ Add Project</button>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width:32px"></th>
+        <th>Project Name</th>
+        <th>Status</th>
+        <th>Deadline</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div id="empty-state" class="empty-state">No projects yet. Add one above.</div>
+</div>
+
+<script>
+  const STATUS_LABELS = {
+    todo: 'Todo',
+    progress: 'In Progress',
+    review: 'In Review',
+    done: 'Done',
+  };
+
+  const STATUS_CLASSES = {
+    todo: 'badge-todo',
+    progress: 'badge-progress',
+    review: 'badge-review',
+    done: 'badge-done',
+  };
+
+  let projects = JSON.parse(localStorage.getItem('projects') || '[]');
+  let nextId = parseInt(localStorage.getItem('nextId') || '1');
+
+  function save() {
+    localStorage.setItem('projects', JSON.stringify(projects));
+    localStorage.setItem('nextId', String(nextId));
+  }
+
+  function formatDeadline(iso) {
+    if (!iso) return '—';
+    const [y, m, d] = iso.split('-');
+    return `${d}.${m}.${y}`;
+  }
+
+  function isOverdue(iso) {
+    if (!iso) return false;
+    return new Date(iso) < new Date(new Date().toDateString());
+  }
+
+  function addProject() {
+    const name = document.getElementById('inp-name').value.trim();
+    if (!name) { document.getElementById('inp-name').focus(); return; }
+    const status = document.getElementById('inp-status').value;
+    const deadline = document.getElementById('inp-deadline').value;
+    projects.push({ id: nextId++, name, status, deadline, notes: '' });
+    save();
+    document.getElementById('inp-name').value = '';
+    document.getElementById('inp-deadline').value = '';
+    render();
+  }
+
+  function deleteProject(id) {
+    projects = projects.filter(p => p.id !== id);
+    save();
+    render();
+  }
+
+  function updateStatus(id, value) {
+    const p = projects.find(p => p.id === id);
+    if (p) { p.status = value; save(); renderBadge(id, value); }
+  }
+
+  function updateNotes(id, value) {
+    const p = projects.find(p => p.id === id);
+    if (p) { p.notes = value; save(); }
+  }
+
+  function renderBadge(id, status) {
+    const el = document.getElementById(`badge-${id}`);
+    if (el) {
+      el.className = `badge ${STATUS_CLASSES[status]}`;
+      el.textContent = STATUS_LABELS[status];
+    }
+  }
+
+  function toggleRow(id) {
+    const notesRow = document.getElementById(`notes-${id}`);
+    const expandBtn = document.getElementById(`expand-${id}`);
+    const projectRow = document.getElementById(`row-${id}`);
+    const isOpen = notesRow.classList.contains('open');
+    notesRow.classList.toggle('open', !isOpen);
+    expandBtn.classList.toggle('rotated', !isOpen);
+    projectRow.classList.toggle('open', !isOpen);
+  }
+
+  function render() {
+    const tbody = document.getElementById('tbody');
+    const emptyState = document.getElementById('empty-state');
+    emptyState.style.display = projects.length ? 'none' : 'block';
+
+    tbody.innerHTML = '';
+
+    projects.forEach(p => {
+      const overdue = isOverdue(p.deadline);
+
+      // Main row
+      const tr = document.createElement('tr');
+      tr.className = 'project-row';
+      tr.id = `row-${p.id}`;
+      tr.innerHTML = `
+        <td>
+          <button class="expand-btn" id="expand-${p.id}" onclick="toggleRow(${p.id})" title="Toggle notes">&#9654;</button>
+        </td>
+        <td class="project-name-cell">${escHtml(p.name)}</td>
+        <td>
+          <select class="status-select" onchange="updateStatus(${p.id}, this.value)">
+            ${Object.entries(STATUS_LABELS).map(([val, label]) =>
+              `<option value="${val}" ${p.status === val ? 'selected' : ''}>${label}</option>`
+            ).join('')}
+          </select>
+        </td>
+        <td class="deadline-cell ${overdue ? 'overdue' : ''}">${formatDeadline(p.deadline)}${overdue ? ' ⚠' : ''}</td>
+        <td>
+          <div class="actions-cell">
+            <button class="delete-btn" onclick="deleteProject(${p.id})" title="Delete project">✕</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+
+      // Notes row
+      const notesRow = document.createElement('tr');
+      notesRow.className = 'notes-row';
+      notesRow.id = `notes-${p.id}`;
+      notesRow.innerHTML = `
+        <td colspan="5" class="notes-cell">
+          <div class="notes-label">Notes</div>
+          <textarea placeholder="Add notes for this project…" oninput="updateNotes(${p.id}, this.value)">${escHtml(p.notes)}</textarea>
+        </td>
+      `;
+      tbody.appendChild(notesRow);
+    });
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // Allow Enter to add project
+  document.getElementById('inp-name').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addProject();
+  });
+
+  render();
+</script>
+</body>
+</html>
