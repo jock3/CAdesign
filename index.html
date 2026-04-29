@@ -226,9 +226,14 @@
       width: 10px;
     }
 
+    tr.notes-row td {
+      background: #F4F1FF;
+    }
+
     td.notes-cell {
       padding: 0.75rem 1rem 1.25rem 1rem;
       background: #FDFBFF;
+      border-radius: 8px;
     }
 
     .note-item {
@@ -638,7 +643,6 @@
     nr.appendChild(colorTd);
 
     const indentTd = document.createElement('td');
-    indentTd.style.background = '#FDFBFF';
     nr.appendChild(indentTd);
 
     const td = document.createElement('td');
@@ -658,7 +662,6 @@
     `;
     nr.appendChild(td);
     const endTd = document.createElement('td');
-    endTd.style.background = '#FDFBFF';
     nr.appendChild(endTd);
     tbody.appendChild(nr);
 
