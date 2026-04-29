@@ -638,7 +638,7 @@
     nr.appendChild(colorTd);
 
     const td = document.createElement('td');
-    td.colSpan = 5;
+    td.colSpan = 4;
     td.className = 'notes-cell';
     td.innerHTML = `
       <div id="notes-list-${p.id}"></div>
@@ -653,6 +653,9 @@
       </div>
     `;
     nr.appendChild(td);
+    const emptyTd = document.createElement('td');
+    emptyTd.style.background = '#FDFBFF';
+    nr.appendChild(emptyTd);
     tbody.appendChild(nr);
 
     p.notes.forEach(n => appendNoteItem(p.id, n));
