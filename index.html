@@ -183,6 +183,14 @@
     font-size: 1.15em;
     color: var(--accent);
     letter-spacing: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.15em;
+    transition: text-decoration-color var(--dur-fast) var(--ease-standard);
+  }
+  .logo-block h1 em:hover {
+    text-decoration-color: var(--accent);
   }
   .logo-block p {
     font-size: 11px;
@@ -576,6 +584,10 @@
     padding: 2.5rem 0 3rem;
     background: var(--bg-2);
     margin-top: 2rem;
+    display: none;
+  }
+  .schema-section.visible {
+    display: block;
   }
   .schema-label {
     font-size: 11px;
@@ -956,6 +968,11 @@ document.getElementById('sort-btn').addEventListener('click', () => {
 });
 
 render();
+
+// ── Schema toggle (click "AI in design") ──
+document.querySelector('.logo-block h1 em').addEventListener('click', () => {
+  document.querySelector('.schema-section').classList.toggle('visible');
+});
 
 // ── Theme toggle ──
 const html = document.documentElement;
