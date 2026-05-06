@@ -300,6 +300,53 @@
     color: var(--ca-bone);
   }
 
+  /* ── Year filter + sort bar ── */
+  .year-sort-bar {
+    border-bottom: 1px solid var(--stroke-1);
+    padding: 0.875rem 0;
+    background: var(--bg-2);
+  }
+  .year-sort-bar .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .year-filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .year-filters label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fg-3);
+    letter-spacing: var(--track-eyebrow);
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .sort-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-3);
+    border: 1px solid var(--stroke-1);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--fg-2);
+    cursor: pointer;
+    font-family: var(--font-body);
+    white-space: nowrap;
+    transition: all var(--dur-fast) var(--ease-standard);
+  }
+  .sort-btn:hover { border-color: var(--stroke-strong); color: var(--fg-1); }
+  .sort-arrow { font-size: 14px; transition: transform var(--dur-base) var(--ease-standard); }
+  .sort-btn.asc .sort-arrow { transform: rotate(180deg); }
+
   /* ── Meeting list ── */
   .meeting-list { padding: 0; }
 
@@ -338,6 +385,14 @@
     letter-spacing: var(--track-eyebrow);
     display: block;
     margin-top: 4px;
+  }
+  .meeting-date .year {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--fg-mute);
+    display: block;
+    margin-top: 2px;
+    letter-spacing: 0.02em;
   }
 
   .meeting-info h2 {
@@ -594,6 +649,18 @@
   </div>
 </div>
 
+<div class="year-sort-bar">
+  <div class="container">
+    <div class="year-filters">
+      <label>År:</label>
+      <button class="tag-btn active" data-year="all">Alla</button>
+    </div>
+    <button class="sort-btn" id="sort-btn">
+      Nyast först <span class="sort-arrow">↓</span>
+    </button>
+  </div>
+</div>
+
 <div class="container">
   <div class="meeting-list" id="meeting-list"></div>
   <div class="no-results" id="no-results">Inga träffar hittades för din sökning.</div>
@@ -728,6 +795,17 @@ allTags.forEach(tag => {
   tagFiltersContainer.appendChild(btn);
 });
 
+// Build year filters
+const allYears = [...new Set(meetings.map(m => m.date.split('-')[0]))].sort((a, b) => b - a);
+const yearFiltersContainer = document.querySelector('.year-filters');
+allYears.forEach(year => {
+  const btn = document.createElement('button');
+  btn.className = 'tag-btn';
+  btn.dataset.year = year;
+  btn.textContent = year;
+  yearFiltersContainer.appendChild(btn);
+});
+
 document.getElementById('total-count').textContent = meetings.length;
 
 const fuse = new Fuse(meetings, {
@@ -737,16 +815,21 @@ const fuse = new Fuse(meetings, {
 });
 
 let currentTag = 'all';
+let currentYear = 'all';
 let currentSearch = '';
+let sortAsc = false;
 let openId = null;
 
 function getFiltered() {
   let results = currentSearch.trim()
     ? fuse.search(currentSearch).map(r => r.item)
     : [...meetings];
-  if (currentTag !== 'all') {
-    results = results.filter(m => m.tags.includes(currentTag));
-  }
+  if (currentTag !== 'all') results = results.filter(m => m.tags.includes(currentTag));
+  if (currentYear !== 'all') results = results.filter(m => m.date.startsWith(currentYear));
+  results.sort((a, b) => {
+    const diff = new Date(a.date) - new Date(b.date);
+    return sortAsc ? diff : -diff;
+  });
   return results;
 }
 
@@ -816,6 +899,7 @@ function render() {
         <div class="meeting-date">
           <span class="day">${getDay(m.date)}</span>
           <span class="month">${getMonth(m.date)}</span>
+          <span class="year">${m.date.split('-')[0]}</span>
         </div>
         <div class="meeting-info">
           <h2>${m.title}</h2>
@@ -847,9 +931,27 @@ document.getElementById('search').addEventListener('input', e => {
 
 document.querySelector('.tag-filters').addEventListener('click', e => {
   if (!e.target.classList.contains('tag-btn')) return;
-  document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tag-filters .tag-btn').forEach(b => b.classList.remove('active'));
   e.target.classList.add('active');
   currentTag = e.target.dataset.tag;
+  render();
+});
+
+document.querySelector('.year-filters').addEventListener('click', e => {
+  if (!e.target.classList.contains('tag-btn')) return;
+  document.querySelectorAll('.year-filters .tag-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  currentYear = e.target.dataset.year;
+  render();
+});
+
+document.getElementById('sort-btn').addEventListener('click', () => {
+  sortAsc = !sortAsc;
+  const btn = document.getElementById('sort-btn');
+  btn.classList.toggle('asc', sortAsc);
+  btn.innerHTML = sortAsc
+    ? 'Äldst först <span class="sort-arrow">↓</span>'
+    : 'Nyast först <span class="sort-arrow">↓</span>';
   render();
 });
 
