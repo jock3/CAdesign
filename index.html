@@ -20,7 +20,6 @@
     --text2: #888880;
     --text3: #555550;
     --accent: #e8874a;
-    --accent2: #d06830;
     --tag-bg: rgba(232,135,74,0.08);
     --tag-text: #e8874a;
   }
@@ -30,14 +29,22 @@
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    font-size: 15px;
+    font-size: 17px;
     line-height: 1.6;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
   }
 
   /* HEADER */
   header {
     border-bottom: 0.5px solid var(--border);
-    padding: 2.5rem 3rem 2rem;
+    padding: 3rem 0 2.25rem;
+  }
+  header .container {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
@@ -45,7 +52,7 @@
   }
   .logo-block h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 2rem;
+    font-size: 2.25rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.1;
@@ -56,23 +63,21 @@
     color: var(--accent);
   }
   .logo-block p {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text2);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     margin-top: 0.4rem;
   }
-  .header-meta {
-    text-align: right;
-  }
+  .header-meta { text-align: right; }
   .header-meta span {
     display: block;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text3);
     letter-spacing: 0.05em;
   }
   .header-meta strong {
-    font-size: 2rem;
+    font-size: 2.25rem;
     font-family: 'Playfair Display', serif;
     font-weight: 700;
     color: var(--text);
@@ -82,8 +87,10 @@
 
   /* SEARCH BAR */
   .search-bar {
-    padding: 1.5rem 3rem;
     border-bottom: 0.5px solid var(--border);
+    padding: 1.5rem 0;
+  }
+  .search-bar .container {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -91,7 +98,6 @@
   .search-wrap {
     position: relative;
     flex: 1;
-    max-width: 520px;
   }
   .search-icon {
     position: absolute;
@@ -99,7 +105,7 @@
     top: 50%;
     transform: translateY(-50%);
     color: var(--text3);
-    font-size: 14px;
+    font-size: 16px;
     pointer-events: none;
   }
   #search {
@@ -107,10 +113,10 @@
     background: var(--bg3);
     border: 0.5px solid var(--border);
     border-radius: 8px;
-    padding: 10px 14px 10px 38px;
+    padding: 11px 14px 11px 40px;
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     outline: none;
     transition: border-color 0.15s;
   }
@@ -118,7 +124,7 @@
   #search:focus { border-color: var(--border-hover); }
 
   .result-count {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text3);
     white-space: nowrap;
   }
@@ -126,15 +132,17 @@
 
   /* TAG FILTERS */
   .tag-filters {
-    padding: 1rem 3rem;
     border-bottom: 0.5px solid var(--border);
+    padding: 1rem 0;
+  }
+  .tag-filters .container {
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
     align-items: center;
   }
   .tag-filters label {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text3);
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -144,8 +152,8 @@
     background: var(--bg3);
     border: 0.5px solid var(--border);
     border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 12px;
+    padding: 5px 14px;
+    font-size: 13px;
     color: var(--text2);
     cursor: pointer;
     font-family: 'DM Sans', sans-serif;
@@ -158,153 +166,130 @@
     color: var(--accent);
   }
 
-  /* MAIN LAYOUT */
-  .layout {
-    display: grid;
-    grid-template-columns: 1fr 360px;
-    min-height: calc(100vh - 200px);
-  }
-
   /* MEETING LIST */
-  .meeting-list {
-    border-right: 0.5px solid var(--border);
-  }
+  .meeting-list { padding: 0; }
+
   .meeting-item {
     border-bottom: 0.5px solid var(--border);
-    padding: 1.5rem 3rem;
-    cursor: pointer;
-    transition: background 0.12s;
-    display: grid;
-    grid-template-columns: 3.5rem 1fr;
-    gap: 1.25rem;
-    align-items: start;
   }
-  .meeting-item:hover { background: var(--bg2); }
-  .meeting-item.active { background: var(--bg2); border-left: 2px solid var(--accent); padding-left: calc(3rem - 2px); }
+
+  .meeting-header {
+    padding: 1.75rem 0;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 4rem 1fr auto;
+    gap: 1.5rem;
+    align-items: start;
+    transition: opacity 0.12s;
+  }
+  .meeting-header:hover { opacity: 0.8; }
 
   .meeting-date {
     text-align: center;
-    padding-top: 2px;
+    padding-top: 3px;
   }
   .meeting-date .day {
     font-family: 'Playfair Display', serif;
-    font-size: 1.6rem;
+    font-size: 1.9rem;
     font-weight: 700;
     line-height: 1;
     color: var(--text);
   }
   .meeting-date .month {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--text3);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     display: block;
-    margin-top: 2px;
+    margin-top: 3px;
   }
 
   .meeting-info h2 {
     font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
+    font-size: 17px;
     font-weight: 500;
     color: var(--text);
     line-height: 1.3;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
   }
   .meeting-info .summary {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--text2);
-    line-height: 1.5;
+    line-height: 1.55;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  .meeting-item.open .meeting-info .summary {
+    display: none;
+  }
   .meeting-tags {
     display: flex;
-    gap: 4px;
+    gap: 5px;
     flex-wrap: wrap;
-    margin-top: 8px;
+    margin-top: 10px;
   }
   .tag {
     background: var(--tag-bg);
     color: var(--tag-text);
     border-radius: 20px;
-    padding: 2px 8px;
-    font-size: 10px;
+    padding: 3px 10px;
+    font-size: 11px;
     letter-spacing: 0.04em;
     font-family: 'DM Mono', monospace;
   }
 
-  /* DETAIL PANEL */
-  .detail-panel {
-    padding: 2rem 2rem;
-    position: sticky;
-    top: 0;
-    max-height: 100vh;
-    overflow-y: auto;
-  }
-  .detail-empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 300px;
+  .meeting-chevron {
     color: var(--text3);
-    font-size: 13px;
-    text-align: center;
-    line-height: 1.8;
+    font-size: 18px;
+    padding-top: 2px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
   }
-  .detail-content { display: none; }
-  .detail-content.visible { display: block; }
+  .meeting-item.open .meeting-chevron {
+    transform: rotate(180deg);
+    color: var(--accent);
+  }
 
-  .detail-number {
-    font-size: 10px;
-    color: var(--text3);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 0.75rem;
+  /* INLINE DETAIL */
+  .meeting-detail {
+    display: none;
+    padding: 0 0 2rem 5.5rem;
   }
-  .detail-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 0.5rem;
+  .meeting-item.open .meeting-detail {
+    display: block;
   }
-  .detail-date {
-    font-size: 12px;
-    color: var(--text2);
-    margin-bottom: 1.5rem;
-  }
+
   .detail-divider {
     border: none;
     border-top: 0.5px solid var(--border);
     margin: 1.25rem 0;
   }
-
   .detail-section-label {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--text3);
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.75rem;
   }
   .detail-summary-text {
-    font-size: 13px;
+    font-size: 15px;
     color: var(--text2);
-    line-height: 1.7;
-    margin-bottom: 1.25rem;
+    line-height: 1.75;
+    margin-bottom: 0.5rem;
   }
   .detail-tools-list {
     list-style: none;
   }
   .detail-tools-list li {
-    font-size: 13px;
+    font-size: 15px;
     color: var(--text);
-    padding: 6px 0;
+    padding: 7px 0;
     border-bottom: 0.5px solid var(--border);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
   .detail-tools-list li::before {
     content: '';
@@ -314,16 +299,15 @@
     background: var(--accent);
     flex-shrink: 0;
   }
-
   .detail-takeaways {
     list-style: none;
   }
   .detail-takeaways li {
-    font-size: 13px;
+    font-size: 15px;
     color: var(--text2);
-    padding: 5px 0 5px 16px;
+    padding: 6px 0 6px 18px;
     position: relative;
-    line-height: 1.5;
+    line-height: 1.55;
   }
   .detail-takeaways li::before {
     content: '—';
@@ -331,46 +315,47 @@
     left: 0;
     color: var(--accent);
   }
-
   .detail-tags {
     display: flex;
-    gap: 5px;
+    gap: 6px;
     flex-wrap: wrap;
   }
-
+  .detail-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.25rem;
+  }
   .detail-link {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-top: 1rem;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--accent);
     text-decoration: none;
     border: 0.5px solid var(--accent);
     border-radius: 6px;
-    padding: 6px 14px;
+    padding: 7px 16px;
     transition: background 0.12s;
   }
   .detail-link:hover { background: var(--tag-bg); }
-
   .miro-link {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-top: 1rem;
-    font-size: 12px;
+    font-size: 13px;
     color: #ffd02f;
     text-decoration: none;
     border: 0.5px solid rgba(255,208,47,0.4);
     border-radius: 6px;
-    padding: 6px 14px;
+    padding: 7px 16px;
     background: rgba(255,208,47,0.05);
     transition: background 0.12s;
   }
   .miro-link:hover { background: rgba(255,208,47,0.1); }
   .miro-icon {
-    width: 14px;
-    height: 14px;
+    width: 15px;
+    height: 15px;
     background: #ffd02f;
     border-radius: 3px;
     display: inline-flex;
@@ -384,9 +369,10 @@
 
   /* NO RESULTS */
   .no-results {
-    padding: 4rem 3rem;
+    padding: 4rem 0;
     text-align: center;
     color: var(--text3);
+    font-size: 15px;
     display: none;
   }
   .no-results.visible { display: block; }
@@ -394,11 +380,12 @@
   /* SCHEMA SECTION */
   .schema-section {
     border-top: 0.5px solid var(--border);
-    padding: 2rem 3rem;
+    padding: 2.5rem 0;
     background: var(--bg2);
+    margin-top: 2rem;
   }
   .schema-label {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--text3);
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -406,12 +393,12 @@
   }
   pre {
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text2);
     background: var(--bg3);
     border: 0.5px solid var(--border);
     border-radius: 8px;
-    padding: 1.25rem;
+    padding: 1.5rem;
     overflow-x: auto;
     line-height: 1.8;
   }
@@ -419,80 +406,56 @@
   .str { color: #c8f060; }
   .arr { color: var(--text2); }
 
-  @media (max-width: 768px) {
-    header { padding: 1.5rem; flex-direction: column; align-items: flex-start; }
-    .search-bar, .tag-filters { padding: 1rem 1.5rem; }
-    .layout { grid-template-columns: 1fr; }
-    .detail-panel { display: none; }
-    .meeting-item { padding: 1.25rem 1.5rem; }
-    .schema-section { padding: 1.5rem; }
+  @media (max-width: 600px) {
+    .logo-block h1 { font-size: 1.75rem; }
+    header .container { flex-direction: column; align-items: flex-start; }
+    .header-meta { text-align: left; }
+    .meeting-header { grid-template-columns: 3.5rem 1fr auto; gap: 1rem; }
+    .meeting-detail { padding-left: 4.5rem; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo-block">
-    <h1>[CA Design] — <em>AI in design</em></h1>
-    <p>Månadsträff för designers — arkiv</p>
-  </div>
-  <div class="header-meta">
-    <span>Antal träffar</span>
-    <strong id="total-count">—</strong>
+  <div class="container">
+    <div class="logo-block">
+      <h1>[CA Design] — <em>AI in design</em></h1>
+      <p>Månadsträff för designers — arkiv</p>
+    </div>
+    <div class="header-meta">
+      <span>Antal träffar</span>
+      <strong id="total-count">—</strong>
+    </div>
   </div>
 </header>
 
 <div class="search-bar">
-  <div class="search-wrap">
-    <span class="search-icon">⌕</span>
-    <input type="text" id="search" placeholder="Sök träff, ämne, verktyg…" autocomplete="off" />
+  <div class="container">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="search" placeholder="Sök träff, ämne, verktyg…" autocomplete="off" />
+    </div>
+    <span class="result-count" id="result-count"></span>
   </div>
-  <span class="result-count" id="result-count"></span>
 </div>
 
 <div class="tag-filters">
-  <label>Filtrera:</label>
-  <button class="tag-btn active" data-tag="all">Alla</button>
-</div>
-
-<div class="layout">
-  <div class="meeting-list" id="meeting-list">
-    <!-- injected by JS -->
-  </div>
-
-  <div class="detail-panel">
-    <div class="detail-empty" id="detail-empty">
-      Välj en träff<br>för att se detaljer
-    </div>
-    <div class="detail-content" id="detail-content">
-      <p class="detail-number" id="d-number"></p>
-      <h2 class="detail-title" id="d-title"></h2>
-      <p class="detail-date" id="d-date"></p>
-      <hr class="detail-divider">
-      <p class="detail-section-label">Sammanfattning</p>
-      <p class="detail-summary-text" id="d-summary"></p>
-      <div id="d-miro-wrap"></div>
-      <hr class="detail-divider">
-      <p class="detail-section-label">Verktyg & tekniker</p>
-      <ul class="detail-tools-list" id="d-tools"></ul>
-      <hr class="detail-divider">
-      <p class="detail-section-label">Viktiga insikter</p>
-      <ul class="detail-takeaways" id="d-takeaways"></ul>
-      <hr class="detail-divider">
-      <p class="detail-section-label">Taggar</p>
-      <div class="detail-tags" id="d-tags"></div>
-      <div id="d-link-wrap"></div>
-    </div>
+  <div class="container">
+    <label>Filtrera:</label>
+    <button class="tag-btn active" data-tag="all">Alla</button>
   </div>
 </div>
 
-<div class="no-results" id="no-results">
-  Inga träffar hittades för din sökning.
+<div class="container">
+  <div class="meeting-list" id="meeting-list"></div>
+  <div class="no-results" id="no-results">Inga träffar hittades för din sökning.</div>
 </div>
 
 <div class="schema-section">
-  <p class="schema-label">JSON-schema — så här lägger du till en ny träff</p>
-  <pre><span class="arr">{</span>
+  <div class="container">
+    <p class="schema-label">JSON-schema — så här lägger du till en ny träff</p>
+    <pre><span class="arr">{</span>
   <span class="key">"id"</span>: <span class="str">"2025-01"</span>,
   <span class="key">"title"</span>: <span class="str">"Titel på träffen"</span>,
   <span class="key">"date"</span>: <span class="str">"2025-01-14"</span>,
@@ -506,6 +469,7 @@
   <span class="key">"link"</span>: <span class="str">"https://länk-till-material.se"</span>,
   <span class="key">"miro"</span>: <span class="str">"https://miro.com/app/board/ditt-board-id"</span>
 <span class="arr">}</span></pre>
+  </div>
 </div>
 
 <script>
@@ -608,18 +572,17 @@ const meetings = [
 
 // Build tag cloud
 const allTags = [...new Set(meetings.flatMap(m => m.tags))].sort();
-const tagFilters = document.querySelector('.tag-filters');
+const tagFiltersContainer = document.querySelector('.tag-filters .container');
 allTags.forEach(tag => {
   const btn = document.createElement('button');
   btn.className = 'tag-btn';
   btn.dataset.tag = tag;
   btn.textContent = tag;
-  tagFilters.appendChild(btn);
+  tagFiltersContainer.appendChild(btn);
 });
 
 document.getElementById('total-count').textContent = meetings.length;
 
-// Fuse search setup
 const fuse = new Fuse(meetings, {
   keys: ['title', 'summary', 'tags', 'tools', 'takeaways'],
   threshold: 0.35,
@@ -628,7 +591,7 @@ const fuse = new Fuse(meetings, {
 
 let currentTag = 'all';
 let currentSearch = '';
-let activeId = null;
+let openId = null;
 
 function getFiltered() {
   let results = currentSearch.trim()
@@ -648,7 +611,35 @@ function formatDate(dateStr) {
 function getDay(dateStr) { return dateStr.split('-')[2]; }
 function getMonth(dateStr) {
   const d = new Date(dateStr + 'T12:00:00');
-  return d.toLocaleDateString('sv-SE', { month: 'short' }).replace('.','');
+  return d.toLocaleDateString('sv-SE', { month: 'short' }).replace('.', '');
+}
+
+function buildDetail(m) {
+  const links = [
+    m.miro ? `<a class="miro-link" href="${m.miro}" target="_blank"><span class="miro-icon">M</span>Öppna Miro-board ↗</a>` : '',
+    m.link ? `<a class="detail-link" href="${m.link}" target="_blank">Material från träffen ↗</a>` : ''
+  ].filter(Boolean).join('');
+
+  return `
+    <p class="detail-section-label">Sammanfattning</p>
+    <p class="detail-summary-text">${m.summary}</p>
+    <hr class="detail-divider">
+    <p class="detail-section-label">Verktyg &amp; tekniker</p>
+    <ul class="detail-tools-list">
+      ${m.tools.map(t => `<li>${t}</li>`).join('')}
+    </ul>
+    <hr class="detail-divider">
+    <p class="detail-section-label">Viktiga insikter</p>
+    <ul class="detail-takeaways">
+      ${m.takeaways.map(t => `<li>${t}</li>`).join('')}
+    </ul>
+    <hr class="detail-divider">
+    <p class="detail-section-label">Taggar</p>
+    <div class="detail-tags">
+      ${m.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+    </div>
+    ${links ? `<div class="detail-links">${links}</div>` : ''}
+  `;
 }
 
 function render() {
@@ -668,60 +659,38 @@ function render() {
 
   count.innerHTML = `<strong>${filtered.length}</strong> av ${meetings.length} träffar`;
 
-  filtered.forEach((m) => {
+  filtered.forEach(m => {
+    const isOpen = m.id === openId;
     const item = document.createElement('div');
-    item.className = 'meeting-item' + (m.id === activeId ? ' active' : '');
+    item.className = 'meeting-item' + (isOpen ? ' open' : '');
+
     item.innerHTML = `
-      <div class="meeting-date">
-        <span class="day">${getDay(m.date)}</span>
-        <span class="month">${getMonth(m.date)}</span>
-      </div>
-      <div class="meeting-info">
-        <h2>${m.title}</h2>
-        <p class="summary">${m.summary}</p>
-        <div class="meeting-tags">
-          ${m.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+      <div class="meeting-header">
+        <div class="meeting-date">
+          <span class="day">${getDay(m.date)}</span>
+          <span class="month">${getMonth(m.date)}</span>
         </div>
+        <div class="meeting-info">
+          <h2>${m.title}</h2>
+          <p class="summary">${m.summary}</p>
+          <div class="meeting-tags">
+            ${m.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+          </div>
+        </div>
+        <span class="meeting-chevron">⌄</span>
+      </div>
+      <div class="meeting-detail">
+        ${buildDetail(m)}
       </div>
     `;
-    item.addEventListener('click', () => showDetail(m));
+
+    item.querySelector('.meeting-header').addEventListener('click', () => {
+      openId = isOpen ? null : m.id;
+      render();
+    });
+
     list.appendChild(item);
   });
-}
-
-function showDetail(m) {
-  activeId = m.id;
-
-  document.getElementById('detail-empty').style.display = 'none';
-  const dc = document.getElementById('detail-content');
-  dc.classList.add('visible');
-
-  const idx = meetings.findIndex(x => x.id === m.id);
-  document.getElementById('d-number').textContent = `Träff #${meetings.length - idx}`;
-  document.getElementById('d-title').textContent = m.title;
-  document.getElementById('d-date').textContent = formatDate(m.date);
-  document.getElementById('d-summary').textContent = m.summary;
-
-  const toolsList = document.getElementById('d-tools');
-  toolsList.innerHTML = m.tools.map(t => `<li>${t}</li>`).join('');
-
-  const takeList = document.getElementById('d-takeaways');
-  takeList.innerHTML = m.takeaways.map(t => `<li>${t}</li>`).join('');
-
-  const miroWrap = document.getElementById('d-miro-wrap');
-  miroWrap.innerHTML = m.miro
-    ? `<a class="miro-link" href="${m.miro}" target="_blank"><span class="miro-icon">M</span>Öppna Miro-board ↗</a>`
-    : '';
-
-  const tagsEl = document.getElementById('d-tags');
-  tagsEl.innerHTML = m.tags.map(t => `<span class="tag">${t}</span>`).join('');
-
-  const linkWrap = document.getElementById('d-link-wrap');
-  linkWrap.innerHTML = m.link
-    ? `<a class="detail-link" href="${m.link}" target="_blank">Material från träffen ↗</a>`
-    : '';
-
-  render();
 }
 
 document.getElementById('search').addEventListener('input', e => {
