@@ -568,6 +568,35 @@
     flex-shrink: 0;
   }
 
+  /* ── Load more ── */
+  .load-more-wrap {
+    padding: 2rem 0;
+    text-align: center;
+    border-top: 1px solid var(--stroke-1);
+  }
+  .load-more-btn {
+    background: var(--bg-3);
+    border: 1px solid var(--stroke-1);
+    border-radius: 6px;
+    padding: 10px 28px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--fg-2);
+    cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-standard);
+  }
+  .load-more-btn:hover {
+    border-color: var(--stroke-strong);
+    color: var(--fg-1);
+  }
+  .load-more-count {
+    display: block;
+    font-size: 12px;
+    color: var(--fg-3);
+    margin-top: 6px;
+  }
+
   /* ── No results ── */
   .no-results {
     padding: 4rem 0;
@@ -771,6 +800,8 @@ let currentYear = 'all';
 let currentSearch = '';
 let sortAsc = false;
 let openId = null;
+let visibleCount = 5;
+const PAGE_SIZE = 5;
 
 function getFiltered() {
   let results = currentSearch.trim()
@@ -841,7 +872,9 @@ function render() {
 
   count.innerHTML = `<strong>${filtered.length}</strong> av ${meetings.length} träffar`;
 
-  filtered.forEach(m => {
+  const visible = filtered.slice(0, visibleCount);
+
+  visible.forEach(m => {
     const isOpen = m.id === openId;
     const item = document.createElement('div');
     item.className = 'meeting-item' + (isOpen ? ' open' : '');
@@ -874,10 +907,26 @@ function render() {
 
     list.appendChild(item);
   });
+
+  if (visibleCount < filtered.length) {
+    const remaining = filtered.length - visibleCount;
+    const wrap = document.createElement('div');
+    wrap.className = 'load-more-wrap';
+    wrap.innerHTML = `
+      <button class="load-more-btn">Ladda fler</button>
+      <span class="load-more-count">${remaining} till</span>
+    `;
+    wrap.querySelector('.load-more-btn').addEventListener('click', () => {
+      visibleCount += PAGE_SIZE;
+      render();
+    });
+    list.appendChild(wrap);
+  }
 }
 
 document.getElementById('search').addEventListener('input', e => {
   currentSearch = e.target.value;
+  visibleCount = PAGE_SIZE;
   render();
 });
 
@@ -886,6 +935,7 @@ document.querySelector('.tag-filters').addEventListener('click', e => {
   document.querySelectorAll('.tag-filters .tag-btn').forEach(b => b.classList.remove('active'));
   e.target.classList.add('active');
   currentTag = e.target.dataset.tag;
+  visibleCount = PAGE_SIZE;
   render();
 });
 
@@ -894,6 +944,7 @@ document.querySelector('.year-filters').addEventListener('click', e => {
   document.querySelectorAll('.year-filters .tag-btn').forEach(b => b.classList.remove('active'));
   e.target.classList.add('active');
   currentYear = e.target.dataset.year;
+  visibleCount = PAGE_SIZE;
   render();
 });
 
@@ -904,6 +955,7 @@ document.getElementById('sort-btn').addEventListener('click', () => {
   btn.innerHTML = sortAsc
     ? 'Äldst först <span class="sort-arrow">↓</span>'
     : 'Nyast först <span class="sort-arrow">↓</span>';
+  visibleCount = PAGE_SIZE;
   render();
 });
 
