@@ -699,7 +699,25 @@
 </div>
 
 <script>
-const meetings = [];
+const meetings = [
+  {
+    id: "2025-11",
+    title: "Gemini - Ett gem i AI världen!",
+    date: "2025-11-27",
+    summary: "En genomgång av Gemini och de funktioner som finns i verktyget. Vi hade fokus på Gems och hur det kan hjälpa oss i det dagliga arbetet.",
+    tools: ["Gemini"],
+    takeaways: [
+      "Gemini är Googles LLM. Kan användas för text, bilder och film.",
+      "Google har fullt ansvar för säkerheten så det är säkert att ladda upp dokument.",
+      "Gems är specificerade agenter som endast kan det vi säger till dem.",
+      "Det finns många exempel på gems men det är viktigt att vi specificerar bredd, kunskap, förhållningssätt och att vi uppdaterar kontinuerligt.",
+      "Utforska gems > Fyll i informationen > Testa och se om du behöver ändra någonting!"
+    ],
+    tags: ["Workflow", "Prompting", "Gemini"],
+    link: "https://jock3.github.io/CAdesign/",
+    miro: "https://miro.com/welcomeonboard/bUlpUXFBMTFINUVhbVE3WWtmSjB1MFhIbUJ3ZndndHU2QlArTkFEcWRGMmFqcit6TXJxQzVRZG12c0VoODBuY0VxNTJoT1BaWnNIeXBMUHRPWmxvZXpxR2g5R09uTy9lV0pCZTJoMERZSlc0Si9hcFRDS25sTnVlTzc0aFBCdlFBd044SHFHaVlWYWk0d3NxeHNmeG9BPT0hdjE=?share_link_id=947349382104"
+  }
+];
 
 // Build tag cloud
 const allTags = [...new Set(meetings.flatMap(m => m.tags))].sort();
