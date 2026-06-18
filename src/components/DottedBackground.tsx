@@ -46,10 +46,8 @@ export function DottedBackground() {
         }}
       />
       <style>{`
-        .ca-dots { color: rgba(180,190,255,0.16); }
-        [data-theme="light"] .ca-dots { color: rgba(40,48,110,0.14); }
-        .ca-spot { --spot: rgba(139,124,255,0.16); }
-        [data-theme="light"] .ca-spot { --spot: rgba(91,75,224,0.10); }
+        .ca-dots { color: rgba(255,255,255,0.14); }
+        .ca-spot { --spot: rgba(255,255,255,0.10); }
       `}</style>
     </>
   );

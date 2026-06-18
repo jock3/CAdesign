@@ -12,17 +12,21 @@ import { SortButton } from './SortButton';
 import { MeetingCard } from './MeetingCard';
 import { MeetingModal } from './MeetingModal';
 import { SchemaPanel } from './SchemaPanel';
-import { ThemeToggle } from './ThemeToggle';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 
 const DottedBackground = dynamic(() => import('./DottedBackground').then(mod => mod.DottedBackground), { ssr: false });
 const LiquidBlobs = dynamic(() => import('./LiquidBlobs').then(mod => mod.LiquidBlobs), { ssr: false });
+const LiquidMetalArt = dynamic(() => import('./LiquidMetalArt').then(mod => mod.LiquidMetalArt), {
+  ssr: false,
+  loading: () => <div className="hero-art glass" style={{ borderRadius: 24 }} aria-hidden="true" />,
+});
+const LiquidMetalButton = dynamic(() => import('./LiquidMetalButton').then(mod => mod.LiquidMetalButton), {
+  ssr: false,
+  loading: () => <div className="glass" style={{ height: 54, width: 190, borderRadius: 999 }} aria-hidden="true" />,
+});
 
 const PAGE_SIZE = 6;
-const fuse = new Fuse(meetings, {
-  keys: ['title', 'summary', 'tags', 'tools', 'takeaways'],
-  threshold: 0.35,
-});
+const fuse = new Fuse(meetings, { keys: ['title', 'summary', 'tags', 'tools', 'takeaways'], threshold: 0.35 });
 
 export function ArchiveClient() {
   const [search, setSearch] = useState('');
@@ -49,6 +53,7 @@ export function ArchiveClient() {
   const visible = filtered.slice(0, visibleCount);
   const remaining = filtered.length - visibleCount;
   const openMeeting = openId ? meetings.find(x => x.id === openId) ?? null : null;
+  const scrollToGrid = () => document.getElementById('archive-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   return (
     <>
@@ -57,51 +62,51 @@ export function ArchiveClient() {
       <LazyMotion features={domAnimation} strict>
         <MotionConfig reducedMotion="user">
           {/* ---------- HERO ---------- */}
-          <header className="wrap" style={{ paddingTop: 'clamp(2.5rem, 7vh, 5rem)', paddingBottom: 'clamp(2rem, 5vh, 3rem)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 'clamp(2.5rem, 8vh, 4.5rem)' }}>
+          <header className="wrap" style={{ paddingTop: 'clamp(2rem, 6vh, 4rem)', paddingBottom: 'clamp(2rem, 5vh, 3rem)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 'clamp(2rem, 6vh, 3.5rem)' }}>
               <span className="eyebrow">CA Design · Community</span>
-              <ThemeToggle />
-            </div>
-
-            <m.h1
-              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: reduced ? 0.001 : 0.6, ease: [0.22, 1, 0.36, 1] }}
-              style={{
-                fontFamily: 'var(--font-space-grotesk), sans-serif',
-                fontSize: 'clamp(2.6rem, 8vw, 5.5rem)', fontWeight: 700,
-                lineHeight: 1.0, letterSpacing: '-0.04em', color: 'var(--fg-1)',
-              }}
-            >
-              Månadsträff för<br /><span className="grad-text">AI in design</span>
-            </m.h1>
-
-            <m.p
-              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: reduced ? 0.001 : 0.6, delay: reduced ? 0 : 0.08, ease: [0.22, 1, 0.36, 1] }}
-              style={{ marginTop: 22, maxWidth: 560, fontSize: 'clamp(1rem, 2vw, 1.15rem)', color: 'var(--fg-2)', lineHeight: 1.65 }}
-            >
-              Ett levande arkiv över våra träffar — verktygen vi testat, demos vi sett och
-              insikterna vi tagit med oss från communityt som utforskar AI i design.
-            </m.p>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 30, flexWrap: 'wrap' }}>
-              <div className="glass" style={{ display: 'flex', alignItems: 'baseline', gap: 10, padding: '12px 20px', borderRadius: 14 }}>
-                <span className="grad-text" style={{ fontFamily: 'var(--font-space-grotesk), sans-serif', fontSize: 28, fontWeight: 700, lineHeight: 1 }}>
-                  {String(totalCount).padStart(2, '0')}
-                </span>
-                <span className="eyebrow">träffar i arkivet</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSchemaOpen(v => !v)}
-                aria-expanded={schemaOpen}
-                aria-controls="schema-panel"
-                className="chip"
-              >
+              <button type="button" onClick={() => setSchemaOpen(v => !v)} aria-expanded={schemaOpen} aria-controls="schema-panel" className="chip">
                 <Braces size={13} aria-hidden="true" /> JSON-schema
               </button>
+            </div>
+
+            <div className="hero-grid">
+              <div>
+                <m.h1
+                  initial={reduced ? { opacity: 0 } : { opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: reduced ? 0.001 : 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  style={{
+                    fontFamily: 'var(--font-space-grotesk), sans-serif',
+                    fontSize: 'clamp(2.4rem, 6vw, 4.6rem)', fontWeight: 700,
+                    lineHeight: 1.0, letterSpacing: '-0.04em', color: 'var(--fg-1)',
+                  }}
+                >
+                  Månadsträff för<br /><span className="grad-text">AI in design</span>
+                </m.h1>
+
+                <m.p
+                  initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: reduced ? 0.001 : 0.6, delay: reduced ? 0 : 0.08, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ marginTop: 22, maxWidth: 520, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: 'var(--fg-2)', lineHeight: 1.65 }}
+                >
+                  Ett levande arkiv över våra träffar — verktygen vi testat, demos vi sett och
+                  insikterna vi tagit med oss från communityt som utforskar AI i design.
+                </m.p>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 32, flexWrap: 'wrap' }}>
+                  <LiquidMetalButton label="Utforska arkivet" onClick={scrollToGrid} />
+                  <div className="glass" style={{ display: 'flex', alignItems: 'baseline', gap: 10, padding: '12px 20px', borderRadius: 14 }}>
+                    <span className="grad-text" style={{ fontFamily: 'var(--font-space-grotesk), sans-serif', fontSize: 26, fontWeight: 700, lineHeight: 1 }}>
+                      {String(totalCount).padStart(2, '0')}
+                    </span>
+                    <span className="eyebrow">träffar i arkivet</span>
+                  </div>
+                </div>
+              </div>
+
+              <LiquidMetalArt />
             </div>
 
             <div id="schema-panel"><SchemaPanel isOpen={schemaOpen} /></div>
@@ -120,19 +125,14 @@ export function ArchiveClient() {
           </section>
 
           {/* ---------- GRID ---------- */}
-          <main className="wrap" style={{ paddingBottom: '4rem' }}>
+          <main className="wrap" id="archive-grid" style={{ paddingBottom: '4rem', scrollMarginTop: 24 }}>
             {filtered.length === 0 ? (
               <div className="glass" role="status" aria-live="polite" style={{ borderRadius: 20, padding: '3.5rem 2rem', textAlign: 'center' }}>
                 <p style={{ fontFamily: 'var(--font-space-grotesk), sans-serif', fontSize: 20, fontWeight: 600, color: 'var(--fg-1)' }}>
                   Inga träffar hittades
                 </p>
                 <p style={{ marginTop: 8, fontSize: 14, color: 'var(--fg-3)' }}>Prova ett annat ord eller rensa filtren.</p>
-                <button
-                  type="button"
-                  onClick={() => reset(() => { setSearch(''); setCurrentTag('all'); setCurrentYear('all'); })}
-                  className="btn"
-                  style={{ marginTop: 22 }}
-                >
+                <button type="button" onClick={() => reset(() => { setSearch(''); setCurrentTag('all'); setCurrentYear('all'); })} className="btn" style={{ marginTop: 22 }}>
                   Rensa allt
                 </button>
               </div>
@@ -158,9 +158,7 @@ export function ArchiveClient() {
 
             {remaining > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, marginTop: 36 }}>
-                <button type="button" onClick={() => setVisibleCount(v => v + PAGE_SIZE)} className="btn">
-                  Ladda fler träffar
-                </button>
+                <button type="button" onClick={() => setVisibleCount(v => v + PAGE_SIZE)} className="btn">Ladda fler träffar</button>
                 <span className="eyebrow">{remaining} till</span>
               </div>
             )}
