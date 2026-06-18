@@ -96,7 +96,7 @@ export function ArchiveClient() {
                 </m.p>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 32, flexWrap: 'wrap' }}>
-                  <LiquidMetalButton label="Utforska arkivet" onClick={scrollToGrid} />
+                  <LiquidMetalButton label="Utforska arkivet" onClick={scrollToGrid} animate={false} />
                   <div className="glass" style={{ display: 'flex', alignItems: 'baseline', gap: 10, padding: '12px 20px', borderRadius: 14 }}>
                     <span className="grad-text" style={{ fontFamily: 'var(--font-space-grotesk), sans-serif', fontSize: 26, fontWeight: 700, lineHeight: 1 }}>
                       {String(totalCount).padStart(2, '0')}
