@@ -9,37 +9,37 @@ export function LiquidBlobs() {
       {/* Blob 1 - top right */}
       <div style={{
         position: 'absolute',
-        top: '-10%',
-        right: '-5%',
-        width: 500,
-        height: 500,
+        top: '-12%',
+        right: '-6%',
+        width: 560,
+        height: 560,
         borderRadius: '60% 40% 70% 30% / 50% 60% 40% 50%',
-        background: 'var(--blob-1-color, rgba(57,82,40,0.12))',
-        filter: 'blur(90px)',
+        background: 'var(--blob-1-color, rgba(57,82,40,0.22))',
+        filter: 'blur(80px)',
         animation: reduced ? 'none' : 'blobDrift1 24s ease-in-out infinite',
         willChange: reduced ? 'auto' : 'transform',
       }} />
       {/* Blob 2 - bottom left */}
       <div style={{
         position: 'absolute',
-        bottom: '-5%',
+        bottom: '-8%',
         left: '-10%',
-        width: 450,
-        height: 450,
+        width: 520,
+        height: 520,
         borderRadius: '40% 60% 30% 70% / 60% 40% 60% 40%',
-        background: 'var(--blob-2-color, rgba(57,82,40,0.10))',
-        filter: 'blur(90px)',
+        background: 'var(--blob-2-color, rgba(57,82,40,0.18))',
+        filter: 'blur(80px)',
         animation: reduced ? 'none' : 'blobDrift2 32s ease-in-out infinite',
         willChange: reduced ? 'auto' : 'transform',
       }} />
       <style>{`
         :root {
-          --blob-1-color: rgba(57,82,40,0.12);
-          --blob-2-color: rgba(57,82,40,0.10);
+          --blob-1-color: rgba(57,82,40,0.22);
+          --blob-2-color: rgba(57,82,40,0.16);
         }
         [data-theme="dark"] {
-          --blob-1-color: rgba(235,60,39,0.15);
-          --blob-2-color: rgba(57,82,40,0.10);
+          --blob-1-color: rgba(235,60,39,0.34);
+          --blob-2-color: rgba(57,82,40,0.30);
         }
         @keyframes blobDrift1 {
           0%, 100% { transform: translate(0, 0) scale(1); border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%; }
