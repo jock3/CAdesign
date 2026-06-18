@@ -3,32 +3,25 @@ import { useState, useMemo } from 'react';
 import { LazyMotion, domAnimation, AnimatePresence, MotionConfig } from 'motion/react';
 import * as m from 'motion/react-m';
 import dynamic from 'next/dynamic';
+import { Braces } from 'lucide-react';
 import Fuse from 'fuse.js';
 import { meetings, allTags, allYears, totalCount, Meeting } from '@/data/meetings';
 import { SearchBar } from './SearchBar';
 import { FilterBar } from './FilterBar';
 import { SortButton } from './SortButton';
-import { MeetingItem } from './MeetingItem';
+import { MeetingCard } from './MeetingCard';
+import { MeetingModal } from './MeetingModal';
 import { SchemaPanel } from './SchemaPanel';
 import { ThemeToggle } from './ThemeToggle';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 
-const DottedBackground = dynamic(
-  () => import('./DottedBackground').then(mod => mod.DottedBackground),
-  { ssr: false }
-);
+const DottedBackground = dynamic(() => import('./DottedBackground').then(mod => mod.DottedBackground), { ssr: false });
+const LiquidBlobs = dynamic(() => import('./LiquidBlobs').then(mod => mod.LiquidBlobs), { ssr: false });
 
-const LiquidBlobs = dynamic(
-  () => import('./LiquidBlobs').then(mod => mod.LiquidBlobs),
-  { ssr: false }
-);
-
-const PAGE_SIZE = 5;
-
+const PAGE_SIZE = 6;
 const fuse = new Fuse(meetings, {
   keys: ['title', 'summary', 'tags', 'tools', 'takeaways'],
   threshold: 0.35,
-  includeScore: true,
 });
 
 export function ArchiveClient() {
@@ -42,11 +35,9 @@ export function ArchiveClient() {
   const reduced = useReducedMotion();
 
   const filtered = useMemo(() => {
-    let results: Meeting[] = search.trim()
-      ? fuse.search(search).map(r => r.item)
-      : [...meetings];
-    if (currentTag !== 'all') results = results.filter(meet => meet.tags.includes(currentTag));
-    if (currentYear !== 'all') results = results.filter(meet => meet.date.startsWith(currentYear));
+    let results: Meeting[] = search.trim() ? fuse.search(search).map(r => r.item) : [...meetings];
+    if (currentTag !== 'all') results = results.filter(x => x.tags.includes(currentTag));
+    if (currentYear !== 'all') results = results.filter(x => x.date.startsWith(currentYear));
     results.sort((a, b) => {
       const diff = new Date(a.date + 'T12:00:00').getTime() - new Date(b.date + 'T12:00:00').getTime();
       return sortAsc ? diff : -diff;
@@ -54,252 +45,141 @@ export function ArchiveClient() {
     return results;
   }, [search, currentTag, currentYear, sortAsc]);
 
-  function handleTagChange(tag: string) { setCurrentTag(tag); setVisibleCount(PAGE_SIZE); }
-  function handleYearChange(year: string) { setCurrentYear(year); setVisibleCount(PAGE_SIZE); }
-  function handleSearchChange(val: string) { setSearch(val); setVisibleCount(PAGE_SIZE); }
-  function handleSortToggle() { setSortAsc(v => !v); setVisibleCount(PAGE_SIZE); }
-  function handleToggle(id: string) { setOpenId(prev => prev === id ? null : id); }
-
+  const reset = (fn: () => void) => { fn(); setVisibleCount(PAGE_SIZE); };
   const visible = filtered.slice(0, visibleCount);
   const remaining = filtered.length - visibleCount;
+  const openMeeting = openId ? meetings.find(x => x.id === openId) ?? null : null;
 
   return (
     <>
       <DottedBackground />
       <LiquidBlobs />
-    <LazyMotion features={domAnimation} strict>
-      <MotionConfig reducedMotion="user">
-        {/* Header */}
-        <header style={{ borderBottom: '1px solid var(--stroke-1)', padding: '3rem 0 2.25rem' }}>
-          <div className="archive-container" style={{
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'space-between',
-            gap: '2rem',
-            flexWrap: 'wrap',
-          }}>
-            <div>
-              <h1 style={{
-                fontFamily: 'var(--font-montserrat, Montserrat, sans-serif)',
-                fontSize: 'clamp(1.75rem, 3vw, 2.5rem)',
-                fontWeight: 800,
-                letterSpacing: '-0.02em',
-                lineHeight: 1.05,
-              }}>
-                [CA Design] —{' '}
-                <button
-                  onClick={() => setSchemaOpen(v => !v)}
-                  aria-expanded={schemaOpen}
-                  aria-controls="schema-panel"
-                  style={{
-                    fontFamily: 'var(--font-caveat, Caveat, cursive)',
-                    fontStyle: 'normal',
-                    fontWeight: 600,
-                    fontSize: '1.15em',
-                    color: 'var(--accent)',
-                    letterSpacing: 0,
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: 0,
-                    textDecoration: 'underline',
-                    textDecorationColor: 'transparent',
-                    textUnderlineOffset: '0.15em',
-                    transition: 'text-decoration-color var(--dur-fast) var(--ease-standard)',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.textDecorationColor = 'var(--accent)')}
-                  onMouseLeave={e => (e.currentTarget.style.textDecorationColor = 'transparent')}
-                  onFocus={e => (e.currentTarget.style.textDecorationColor = 'var(--accent)')}
-                  onBlur={e => (e.currentTarget.style.textDecorationColor = 'transparent')}
-                >
-                  AI in design
-                </button>
-              </h1>
-              <p style={{
-                fontSize: 11,
-                fontWeight: 600,
-                color: 'var(--fg-3)',
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                marginTop: '0.5rem',
-              }}>
-                Månadsträff för designers — arkiv
-              </p>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1rem' }}>
+      <LazyMotion features={domAnimation} strict>
+        <MotionConfig reducedMotion="user">
+          {/* ---------- HERO ---------- */}
+          <header className="wrap" style={{ paddingTop: 'clamp(2.5rem, 7vh, 5rem)', paddingBottom: 'clamp(2rem, 5vh, 3rem)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 'clamp(2.5rem, 8vh, 4.5rem)' }}>
+              <span className="eyebrow">CA Design · Community</span>
               <ThemeToggle />
-              <div style={{ textAlign: 'right' }}>
-                <span style={{
-                  display: 'block',
-                  fontSize: 11,
-                  fontWeight: 600,
-                  color: 'var(--fg-3)',
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
-                }}>
-                  Antal träffar
+            </div>
+
+            <m.h1
+              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reduced ? 0.001 : 0.6, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                fontFamily: 'var(--font-space-grotesk), sans-serif',
+                fontSize: 'clamp(2.6rem, 8vw, 5.5rem)', fontWeight: 700,
+                lineHeight: 1.0, letterSpacing: '-0.04em', color: 'var(--fg-1)',
+              }}
+            >
+              Månadsträff för<br /><span className="grad-text">AI in design</span>
+            </m.h1>
+
+            <m.p
+              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reduced ? 0.001 : 0.6, delay: reduced ? 0 : 0.08, ease: [0.22, 1, 0.36, 1] }}
+              style={{ marginTop: 22, maxWidth: 560, fontSize: 'clamp(1rem, 2vw, 1.15rem)', color: 'var(--fg-2)', lineHeight: 1.65 }}
+            >
+              Ett levande arkiv över våra träffar — verktygen vi testat, demos vi sett och
+              insikterna vi tagit med oss från communityt som utforskar AI i design.
+            </m.p>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 30, flexWrap: 'wrap' }}>
+              <div className="glass" style={{ display: 'flex', alignItems: 'baseline', gap: 10, padding: '12px 20px', borderRadius: 14 }}>
+                <span className="grad-text" style={{ fontFamily: 'var(--font-space-grotesk), sans-serif', fontSize: 28, fontWeight: 700, lineHeight: 1 }}>
+                  {String(totalCount).padStart(2, '0')}
                 </span>
-                <strong style={{
-                  fontFamily: 'var(--font-montserrat, Montserrat, sans-serif)',
-                  fontSize: 'clamp(1.75rem, 3vw, 2.5rem)',
-                  fontWeight: 800,
-                  letterSpacing: '-0.02em',
-                  display: 'block',
-                  lineHeight: 1.05,
-                  marginTop: 4,
-                }}>
-                  {totalCount}
-                </strong>
+                <span className="eyebrow">träffar i arkivet</span>
               </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Search bar */}
-        <SearchBar
-          value={search}
-          onChange={handleSearchChange}
-          resultCount={filtered.length}
-          totalCount={totalCount}
-        />
-
-        {/* Sticky control bar */}
-        <div style={{ position: 'sticky', top: 0, zIndex: 10, backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
-          <FilterBar
-            allTags={allTags}
-            currentTag={currentTag}
-            onTagChange={handleTagChange}
-            allYears={allYears}
-            currentYear={currentYear}
-            onYearChange={handleYearChange}
-          />
-          <div style={{
-            borderBottom: '1px solid var(--stroke-1)',
-            padding: '0.875rem 0',
-            background: 'var(--bg-2)',
-          }}>
-            <div className="archive-container" style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}>
-              <SortButton sortAsc={sortAsc} onToggle={handleSortToggle} />
-            </div>
-          </div>
-        </div>
-
-        {/* Meeting list */}
-        <main>
-          <div className="archive-container">
-            {filtered.length === 0 ? (
-              <div
-                style={{ padding: '4rem 0', textAlign: 'center', color: 'var(--fg-3)', fontSize: 15 }}
-                aria-live="polite"
-                aria-atomic="true"
+              <button
+                type="button"
+                onClick={() => setSchemaOpen(v => !v)}
+                aria-expanded={schemaOpen}
+                aria-controls="schema-panel"
+                className="chip"
               >
-                <p>Inga träffar hittades för din sökning.</p>
-                <p style={{ marginTop: 8, fontSize: 13 }}>Prova ett annat ord eller rensa filtren.</p>
+                <Braces size={13} aria-hidden="true" /> JSON-schema
+              </button>
+            </div>
+
+            <div id="schema-panel"><SchemaPanel isOpen={schemaOpen} /></div>
+          </header>
+
+          {/* ---------- CONTROLS ---------- */}
+          <section className="wrap" style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: '2.25rem' }}>
+            <SearchBar value={search} onChange={v => reset(() => setSearch(v))} resultCount={filtered.length} totalCount={totalCount} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 16, flexWrap: 'wrap' }}>
+              <FilterBar
+                allTags={allTags} currentTag={currentTag} onTagChange={t => reset(() => setCurrentTag(t))}
+                allYears={allYears} currentYear={currentYear} onYearChange={y => reset(() => setCurrentYear(y))}
+              />
+              <SortButton sortAsc={sortAsc} onToggle={() => reset(() => setSortAsc(v => !v))} />
+            </div>
+          </section>
+
+          {/* ---------- GRID ---------- */}
+          <main className="wrap" style={{ paddingBottom: '4rem' }}>
+            {filtered.length === 0 ? (
+              <div className="glass" role="status" aria-live="polite" style={{ borderRadius: 20, padding: '3.5rem 2rem', textAlign: 'center' }}>
+                <p style={{ fontFamily: 'var(--font-space-grotesk), sans-serif', fontSize: 20, fontWeight: 600, color: 'var(--fg-1)' }}>
+                  Inga träffar hittades
+                </p>
+                <p style={{ marginTop: 8, fontSize: 14, color: 'var(--fg-3)' }}>Prova ett annat ord eller rensa filtren.</p>
                 <button
-                  onClick={() => { setSearch(''); setCurrentTag('all'); setCurrentYear('all'); setVisibleCount(PAGE_SIZE); }}
-                  style={{
-                    marginTop: 16,
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--accent)',
-                    cursor: 'pointer',
-                    fontSize: 14,
-                    fontWeight: 600,
-                    fontFamily: 'inherit',
-                    textDecoration: 'underline',
-                  }}
+                  type="button"
+                  onClick={() => reset(() => { setSearch(''); setCurrentTag('all'); setCurrentYear('all'); })}
+                  className="btn"
+                  style={{ marginTop: 22 }}
                 >
                   Rensa allt
                 </button>
               </div>
             ) : (
-              <AnimatePresence mode="popLayout">
-                {visible.map((meeting, index) => (
-                  <m.div
-                    key={meeting.id}
-                    layout
-                    initial={reduced ? { opacity: 0 } : { opacity: 0, y: 20 }}
-                    animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
-                    exit={reduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
-                    transition={{
-                      duration: reduced ? 0.12 : 0.3,
-                      delay: reduced ? 0 : Math.min(index, 4) * 0.05,
-                      ease: [0.2, 0, 0, 1],
-                    }}
-                  >
-                    <MeetingItem
-                      meeting={meeting}
-                      isOpen={openId === meeting.id}
-                      onToggle={() => handleToggle(meeting.id)}
-                    />
-                  </m.div>
-                ))}
-              </AnimatePresence>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 18 }}>
+                <AnimatePresence mode="popLayout">
+                  {visible.map((meeting, i) => (
+                    <m.div
+                      key={meeting.id}
+                      layout
+                      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 22 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
+                      transition={{ duration: reduced ? 0.001 : 0.4, delay: reduced ? 0 : Math.min(i, 5) * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                      style={{ height: '100%' }}
+                    >
+                      <MeetingCard meeting={meeting} onOpen={() => setOpenId(meeting.id)} />
+                    </m.div>
+                  ))}
+                </AnimatePresence>
+              </div>
             )}
 
             {remaining > 0 && (
-              <div style={{ padding: '2rem 0', textAlign: 'center', borderTop: '1px solid var(--stroke-1)' }}>
-                <button
-                  onClick={() => setVisibleCount(v => v + PAGE_SIZE)}
-                  style={{
-                    background: 'var(--bg-3)',
-                    border: '1px solid var(--stroke-1)',
-                    borderRadius: 6,
-                    padding: '10px 28px',
-                    fontFamily: 'inherit',
-                    fontSize: 14,
-                    fontWeight: 600,
-                    color: 'var(--fg-2)',
-                    cursor: 'pointer',
-                    transition: 'all var(--dur-fast) var(--ease-standard)',
-                  }}
-                >
-                  Ladda fler
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, marginTop: 36 }}>
+                <button type="button" onClick={() => setVisibleCount(v => v + PAGE_SIZE)} className="btn">
+                  Ladda fler träffar
                 </button>
-                <span style={{ display: 'block', fontSize: 12, color: 'var(--fg-3)', marginTop: 6 }}>
-                  {remaining} till
-                </span>
+                <span className="eyebrow">{remaining} till</span>
               </div>
             )}
-          </div>
-        </main>
+          </main>
 
-        {/* Schema panel */}
-        <div id="schema-panel">
-          <SchemaPanel isOpen={schemaOpen} />
-        </div>
+          {/* ---------- FOOTER ---------- */}
+          <footer style={{ borderTop: '1px solid var(--glass-border)', marginTop: '2rem' }}>
+            <div className="wrap" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, flexWrap: 'wrap', padding: '2rem clamp(1rem,4vw,2rem)' }}>
+              <span className="eyebrow">CA Design © 2026</span>
+              <span className="eyebrow">Månadsträff för designers</span>
+            </div>
+          </footer>
 
-        {/* Footer */}
-        <footer style={{
-          borderTop: '1px solid var(--stroke-1)',
-          padding: '2rem 0',
-          marginTop: '2rem',
-          background: 'var(--bg-2)',
-        }}>
-          <div className="archive-container" style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '1rem',
-          }}>
-            <span style={{ fontSize: 13, color: 'var(--fg-3)' }}>
-              CA Design © 2026
-            </span>
-            <span style={{
-              fontFamily: 'var(--font-caveat, Caveat, cursive)',
-              fontSize: 16,
-              color: 'var(--fg-3)',
-            }}>
-              Månadsträff för designers
-            </span>
-          </div>
-        </footer>
-      </MotionConfig>
-    </LazyMotion>
+          {/* ---------- MODAL ---------- */}
+          <AnimatePresence>
+            {openMeeting && <MeetingModal meeting={openMeeting} onClose={() => setOpenId(null)} />}
+          </AnimatePresence>
+        </MotionConfig>
+      </LazyMotion>
     </>
   );
 }

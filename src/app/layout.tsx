@@ -1,25 +1,32 @@
 import type { Metadata } from "next";
-import { Montserrat, Caveat } from "next/font/google";
+import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
-const montserrat = Montserrat({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-montserrat",
-  display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
-});
-
-const caveat = Caveat({
-  subsets: ["latin"],
-  variable: "--font-caveat",
+  variable: "--font-space-grotesk",
   display: "swap",
   weight: ["400", "500", "600", "700"],
 });
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  display: "swap",
+  weight: ["400", "500", "600"],
+});
+
 export const metadata: Metadata = {
   title: "CA Design — AI in design",
-  description: "Månadsträff för designers — arkiv",
+  description: "Månadsträff för designers — arkiv över AI-in-design-träffar",
 };
 
 export default function RootLayout({
@@ -29,13 +36,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="sv" suppressHydrationWarning>
-      <body
-        className={`${montserrat.variable} ${caveat.variable}`}
-        style={{ fontFamily: 'var(--font-montserrat), Helvetica Neue, Arial, sans-serif' }}
-      >
+      <body className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrains.variable}`}>
         <ThemeProvider
           attribute="data-theme"
-          defaultTheme="system"
+          defaultTheme="dark"
           storageKey="ca-theme"
           enableSystem
         >

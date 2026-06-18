@@ -7,6 +7,16 @@ interface SchemaPanelProps {
   isOpen: boolean;
 }
 
+const K = ({ children }: { children: React.ReactNode }) => (
+  <span style={{ color: 'var(--a-indigo)' }}>{children}</span>
+);
+const S = ({ children }: { children: React.ReactNode }) => (
+  <span style={{ color: 'var(--a-cyan)' }}>{children}</span>
+);
+const P = ({ children }: { children: React.ReactNode }) => (
+  <span style={{ color: 'var(--fg-3)' }}>{children}</span>
+);
+
 export function SchemaPanel({ isOpen }: SchemaPanelProps) {
   const reduced = useReducedMotion();
 
@@ -18,59 +28,35 @@ export function SchemaPanel({ isOpen }: SchemaPanelProps) {
           initial={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
           animate={reduced ? { opacity: 1 } : { opacity: 1, height: 'auto' }}
           exit={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
-          transition={{ duration: reduced ? 0.12 : 0.28, ease: [0.2, 0, 0, 1] }}
+          transition={{ duration: reduced ? 0.001 : 0.3, ease: [0.22, 1, 0.36, 1] }}
           style={{ overflow: 'hidden' }}
         >
           <div
             role="region"
             aria-label="JSON-schema för ny träff"
-            style={{
-              borderTop: '1px solid var(--stroke-1)',
-              padding: '2.5rem 0 3rem',
-              background: 'var(--bg-2)',
-              marginTop: '2rem',
-            }}
+            className="glass"
+            style={{ borderRadius: 18, padding: 'clamp(1.25rem, 3vw, 1.75rem)', marginTop: 20 }}
           >
-            <div className="archive-container">
-              <p style={{
-                fontSize: 11,
-                fontWeight: 600,
-                color: 'var(--fg-3)',
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                marginBottom: '1rem',
-              }}>
-                JSON-schema — så här lägger du till en ny träff
-              </p>
-              <pre
-                style={{
-                  fontFamily: 'ui-monospace, SF Mono, Menlo, Consolas, monospace',
-                  fontSize: 12,
-                  color: 'var(--fg-2)',
-                  background: 'var(--bg-3)',
-                  border: '1px solid var(--stroke-1)',
-                  borderRadius: 6,
-                  padding: '1.5rem',
-                  overflowX: 'auto',
-                  lineHeight: 1.8,
-                }}
-              >
-                {'{'}{'\n'}
-                {'  '}<span className="syntax-key">&quot;id&quot;</span>{': '}<span className="syntax-str">&quot;2025-01&quot;</span>{',\n'}
-                {'  '}<span className="syntax-key">&quot;title&quot;</span>{': '}<span className="syntax-str">&quot;Titel på träffen&quot;</span>{',\n'}
-                {'  '}<span className="syntax-key">&quot;date&quot;</span>{': '}<span className="syntax-str">&quot;2025-01-14&quot;</span>{',\n'}
-                {'  '}<span className="syntax-key">&quot;summary&quot;</span>{': '}<span className="syntax-str">&quot;Kort beskrivning av vad som togs upp.&quot;</span>{',\n'}
-                {'  '}<span className="syntax-key">&quot;tools&quot;</span>{': '}<span className="syntax-arr">{'['}</span><span className="syntax-str">&quot;Midjourney&quot;</span>{', '}<span className="syntax-str">&quot;ChatGPT&quot;</span><span className="syntax-arr">{']'}</span>{',\n'}
-                {'  '}<span className="syntax-key">&quot;takeaways&quot;</span>{': '}<span className="syntax-arr">{'['}</span>{'\n'}
-                {'    '}<span className="syntax-str">&quot;Insikt nummer ett&quot;</span>{',\n'}
-                {'    '}<span className="syntax-str">&quot;Insikt nummer två&quot;</span>{'\n'}
-                {'  '}<span className="syntax-arr">{']'}</span>{',\n'}
-                {'  '}<span className="syntax-key">&quot;tags&quot;</span>{': '}<span className="syntax-arr">{'['}</span><span className="syntax-str">&quot;bildgenerering&quot;</span>{', '}<span className="syntax-str">&quot;prompting&quot;</span><span className="syntax-arr">{']'}</span>{',\n'}
-                {'  '}<span className="syntax-key">&quot;link&quot;</span>{': '}<span className="syntax-str">&quot;https://länk-till-material.se&quot;</span>{',\n'}
-                {'  '}<span className="syntax-key">&quot;miro&quot;</span>{': '}<span className="syntax-str">&quot;https://miro.com/app/board/ditt-board-id&quot;</span>{'\n'}
-                {'}'}
-              </pre>
-            </div>
+            <p className="eyebrow" style={{ marginBottom: 14 }}>
+              JSON-schema — så här lägger du till en ny träff
+            </p>
+            <pre style={{
+              fontFamily: 'var(--font-jetbrains), ui-monospace, monospace',
+              fontSize: 12.5, color: 'var(--fg-2)', lineHeight: 1.85,
+              overflowX: 'auto', whiteSpace: 'pre',
+            }}>
+{'{'}{'\n'}
+{'  '}<K>&quot;id&quot;</K><P>: </P><S>&quot;2025-01&quot;</S><P>,</P>{'\n'}
+{'  '}<K>&quot;title&quot;</K><P>: </P><S>&quot;Titel på träffen&quot;</S><P>,</P>{'\n'}
+{'  '}<K>&quot;date&quot;</K><P>: </P><S>&quot;2025-01-14&quot;</S><P>,</P>{'\n'}
+{'  '}<K>&quot;summary&quot;</K><P>: </P><S>&quot;Kort beskrivning…&quot;</S><P>,</P>{'\n'}
+{'  '}<K>&quot;tools&quot;</K><P>: [</P><S>&quot;Midjourney&quot;</S><P>, </P><S>&quot;ChatGPT&quot;</S><P>],</P>{'\n'}
+{'  '}<K>&quot;takeaways&quot;</K><P>: [</P><S>&quot;Insikt ett&quot;</S><P>, </P><S>&quot;Insikt två&quot;</S><P>],</P>{'\n'}
+{'  '}<K>&quot;tags&quot;</K><P>: [</P><S>&quot;bildgenerering&quot;</S><P>],</P>{'\n'}
+{'  '}<K>&quot;link&quot;</K><P>: </P><S>&quot;https://…&quot;</S><P>,</P>{'\n'}
+{'  '}<K>&quot;miro&quot;</K><P>: </P><S>&quot;https://miro.com/…&quot;</S>{'\n'}
+{'}'}
+            </pre>
           </div>
         </m.div>
       )}

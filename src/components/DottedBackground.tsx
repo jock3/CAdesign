@@ -2,65 +2,54 @@
 import { useEffect, useRef } from 'react';
 import { useReducedMotion } from '@/lib/useReducedMotion';
 
+/** Fine technical dot-grid + a neon spotlight that tracks the cursor. */
 export function DottedBackground() {
   const reduced = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (reduced || !ref.current) return;
-
     const el = ref.current;
-
     function onMouseMove(e: MouseEvent) {
-      const x = Number(e.clientX);
-      const y = Number(e.clientY);
-      el.style.setProperty('--mx', `${x}px`);
-      el.style.setProperty('--my', `${y}px`);
+      el.style.setProperty('--mx', `${Number(e.clientX)}px`);
+      el.style.setProperty('--my', `${Number(e.clientY)}px`);
     }
-
     window.addEventListener('mousemove', onMouseMove);
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-    };
+    return () => window.removeEventListener('mousemove', onMouseMove);
   }, [reduced]);
 
   return (
     <>
-      {/* Dot grid surface — color set via stylesheet (not inline) so the
-          dark-theme override isn't beaten by inline-style specificity */}
+      {/* dot grid */}
       <div
         className="ca-dots"
         aria-hidden="true"
         style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: -2,
-          pointerEvents: 'none',
-          backgroundImage: 'radial-gradient(circle, currentColor 1.6px, transparent 1.6px)',
-          backgroundSize: '26px 26px',
-          animation: reduced ? 'none' : 'dotDrift 40s ease-in-out infinite',
+          position: 'fixed', inset: 0, zIndex: -2, pointerEvents: 'none',
+          backgroundImage: 'radial-gradient(circle, currentColor 1.4px, transparent 1.4px)',
+          backgroundSize: '44px 44px',
+          maskImage: 'radial-gradient(ellipse 90% 70% at 50% 0%, #000 35%, transparent 78%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 90% 70% at 50% 0%, #000 35%, transparent 78%)',
+          animation: reduced ? 'none' : 'dotDrift 24s linear infinite',
         }}
       />
-      {/* Pointer spotlight — ref lives on the SAME element that reads --mx/--my
-          (CSS custom properties don't cross between sibling elements) */}
+      {/* cursor spotlight — ref on the same element that reads --mx/--my */}
       <div
         ref={ref}
-        className="ca-spotlight"
+        className="ca-spot"
         aria-hidden="true"
         style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: -2,
-          pointerEvents: 'none',
+          position: 'fixed', inset: 0, zIndex: -2, pointerEvents: 'none',
           background:
-            'radial-gradient(circle 240px at var(--mx, 50%) var(--my, 50%), var(--spot, rgba(57,82,40,0.12)) 0%, transparent 70%)',
+            'radial-gradient(360px circle at var(--mx, 50%) var(--my, 30%), var(--spot) 0%, transparent 68%)',
+          transition: 'background 60ms linear',
         }}
       />
       <style>{`
-        .ca-dots { color: rgba(40,40,45,0.16); }
-        [data-theme="dark"] .ca-dots { color: rgba(244,241,236,0.19); }
-        .ca-spotlight { --spot: rgba(57,82,40,0.12); }
-        [data-theme="dark"] .ca-spotlight { --spot: rgba(235,60,39,0.18); }
+        .ca-dots { color: rgba(180,190,255,0.16); }
+        [data-theme="light"] .ca-dots { color: rgba(40,48,110,0.14); }
+        .ca-spot { --spot: rgba(139,124,255,0.16); }
+        [data-theme="light"] .ca-spot { --spot: rgba(91,75,224,0.10); }
       `}</style>
     </>
   );
