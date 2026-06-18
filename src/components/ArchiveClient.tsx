@@ -1,5 +1,6 @@
 'use client';
 import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { LazyMotion, domAnimation, AnimatePresence, MotionConfig } from 'motion/react';
 import * as m from 'motion/react-m';
 import dynamic from 'next/dynamic';
@@ -37,6 +38,7 @@ export function ArchiveClient() {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [schemaOpen, setSchemaOpen] = useState(false);
   const reduced = useReducedMotion();
+  const router = useRouter();
 
   const filtered = useMemo(() => {
     let results: Meeting[] = search.trim() ? fuse.search(search).map(r => r.item) : [...meetings];
@@ -53,7 +55,6 @@ export function ArchiveClient() {
   const visible = filtered.slice(0, visibleCount);
   const remaining = filtered.length - visibleCount;
   const openMeeting = openId ? meetings.find(x => x.id === openId) ?? null : null;
-  const scrollToGrid = () => document.getElementById('archive-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   return (
     <>
@@ -96,7 +97,7 @@ export function ArchiveClient() {
                 </m.p>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 32, flexWrap: 'wrap' }}>
-                  <LiquidMetalButton label="Utforska arkivet" onClick={scrollToGrid} animate={false} />
+                  <LiquidMetalButton label="Resources" onClick={() => router.push('/resources')} animate={false} />
                   <div className="glass" style={{ display: 'flex', alignItems: 'baseline', gap: 10, padding: '12px 20px', borderRadius: 14 }}>
                     <span className="grad-text" style={{ fontFamily: 'var(--font-space-grotesk), sans-serif', fontSize: 26, fontWeight: 700, lineHeight: 1 }}>
                       {String(totalCount).padStart(2, '0')}
