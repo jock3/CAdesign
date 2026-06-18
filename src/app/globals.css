@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-1: #F4F1EC;
+  --color-bg-2: #FAF8F4;
+  --color-bg-3: #FFFFFF;
+  --color-fg-1: #28282D;
+  --color-fg-2: #5C5D5B;
+  --color-fg-3: #8A8A86;
+  --color-fg-mute: #C8C5BD;
+  --color-accent: #395228;
+  --color-stroke-1: #E6E3DC;
+  --color-stroke-2: #C8C5BD;
+  --font-display: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  --font-offset: 'Caveat', cursive;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+/* CA Design custom properties - NOT Tailwind tokens, just CSS vars for runtime theming */
+:root {
+  --bg-1: #F4F1EC;
+  --bg-2: #FAF8F4;
+  --bg-3: #FFFFFF;
+  --fg-1: #28282D;
+  --fg-2: #5C5D5B;
+  --fg-3: #696965;
+  --fg-mute: #C8C5BD;
+  --accent: #395228;
+  --tag-bg: rgba(57, 82, 40, 0.08);
+  --tag-text: #395228;
+  --stroke-1: #E6E3DC;
+  --stroke-2: #C8C5BD;
+  --ease-standard: cubic-bezier(0.2, 0.0, 0.0, 1.0);
+  --dur-fast: 120ms;
+  --dur-base: 220ms;
+  --ca-cherry-tomato: #EB3C27;
+  --ca-bone: #F4F1EC;
+}
+
+[data-theme="dark"] {
+  --bg-1: #0F0F0D;
+  --bg-2: #171714;
+  --bg-3: #1F1F1C;
+  --fg-1: #F0EDE6;
+  --fg-2: #A8A49C;
+  --fg-3: #8A8780;
+  --fg-mute: #44423E;
+  --accent: #EB3C27;
+  --tag-bg: rgba(235, 60, 39, 0.10);
+  --tag-text: #F04E35;
+  --stroke-1: rgba(240, 237, 230, 0.08);
+  --stroke-2: rgba(240, 237, 230, 0.14);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  transition: background var(--dur-base) var(--ease-standard),
+              color var(--dur-base) var(--ease-standard);
+}
+
+html, body {
+  background: var(--bg-1);
+  color: var(--fg-1);
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #EB3C27;
+  color: #F4F1EC;
+}
+
+/* Global focus indicator — satisfies WCAG 2.4.11 (FIX-01) */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Active filter chip in dark theme — fixes contrast from 3.58:1 to ~5.5:1 (FIX-04) */
+/* !important required because the component sets background/border via inline style */
+[data-theme="dark"] .filter-chip-active {
+  background: #C42E1A !important;
+  border-color: #C42E1A !important;
+}
+
+/* Responsive container (FIX-06) */
+.archive-container {
+  width: 100%;
+  max-width: min(75vw, 1200px);
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0 clamp(0.75rem, 4vw, 1.5rem);
+}
+
+@media (max-width: 600px) {
+  .archive-container {
+    max-width: 100%;
+  }
+}
+
+/* Syntax highlighting classes for SchemaPanel (FIX-08) */
+.syntax-key { color: #2C5282; }
+.syntax-str { color: var(--accent); }
+.syntax-arr { color: var(--fg-2); }
+[data-theme="dark"] .syntax-key { color: #7EB8F7; }
+[data-theme="dark"] .syntax-str { color: #7ECB7E; }
+
+/* Dotted background animation */
+@keyframes dotDrift {
+  0% { background-position: 0px 0px; }
+  50% { background-position: 40px 40px; }
+  100% { background-position: 0px 0px; }
+}
+
+/* Reduced motion safety net */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
