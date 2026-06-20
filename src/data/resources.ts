@@ -147,6 +147,7 @@ export const resourceCategories: ResourceCategory[] = [
     title: 'MCP-servrar',
     blurb: 'Servrar Claude Code kan anropa direkt under arbetet.',
     items: [
+      { name: 'ruflo', tag: 'MCP', url: 'https://github.com/ruvnet/ruflo', description: 'Agent-meta-harness för Claude Code — deploya multi-agent-swärmar med delat minne, neural routing och 300+ MCP-verktyg. Som npm-paket, Claude Code-plugins eller MCP-server.' },
       { name: '21st.dev Magic', tag: 'MCP', url: 'https://21st.dev/magic', description: 'Generera och hämta UI-komponenter direkt i Claude Code med naturligt språk.' },
       { name: 'shadcn MCP', tag: 'MCP', url: 'https://ui.shadcn.com/docs/mcp', description: 'Bläddra, sök och installera shadcn-komponenter. npx shadcn@latest mcp init --client claude' },
       { name: 'Supabase MCP', tag: 'MCP', url: 'https://supabase.com/docs/guides/getting-started/mcp', description: 'Databas, migrationer och Edge Functions direkt från Claude.' },
